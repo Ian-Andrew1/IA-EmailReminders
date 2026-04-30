@@ -1,1 +1,38 @@
+name: Daily Email Person 1
+
+on:
+  schedule:
+    - cron: "0 7 * * *"   # 07:00 UK time daily
+  workflow_dispatch:
+
+jobs:
+  send_email:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Read list
+      id: list
+      run: |
+        ITEMS=$(jq -r '.items | join("\n")' list_person1.json)
+        echo "items<<EOF" >> $GITHUB_OUTPUT
+        echo "$ITEMS" >> $GITHUB_OUTPUT
+        echo "EOF" >> $GITHUB_OUTPUT
+
+    - name: Send email
+      uses: dawidd6/action-send-mail@v3
+      with:
+        server_address: smtp.office365.com
+        server_port: 587
+        username: ${{ secrets.OUTLOOK_USER }}
+        password: ${{ secrets.OUTLOOK_APP_PASSWORD }}
+        subject: "Daily List for Person 1"
+        to: "PERSON1_EMAIL_ADDRESS"
+        from: ${{ secrets.OUTLOOK_USER }}
+        body: |
+          Here is your daily list:
+
+          ${{ steps.list.outputs.items }}
 
