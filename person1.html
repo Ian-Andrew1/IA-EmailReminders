@@ -1,1 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Person 1 List</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<h2>Person 1 Daily List</h2>
+
+<div id="listContainer"></div>
+
+<button id="addBtn">Add Item</button>
+<button id="saveBtn">Save</button>
+
+<script src="js/editor.js"></script>
+<script>
+const jsonFile = "list_person1.json";
+const repoOwner = "YOUR_GITHUB_USERNAME";
+const repoName = "YOUR_REPO_NAME";
+
+let items = [];
+
+(async () => {
+    items = await loadList(jsonFile);
+    renderList(items, document.getElementById("listContainer"));
+})();
+
+document.getElementById("addBtn").onclick = () => {
+    items.push("New item");
+    renderList(items, document.getElementById("listContainer"));
+};
+
+document.getElementById("saveBtn").onclick = () => {
+    const token = prompt("Enter your GitHub token");
+    saveList(jsonFile, items, token, repoOwner, repoName);
+};
+</script>
+</body>
+</html>
 
