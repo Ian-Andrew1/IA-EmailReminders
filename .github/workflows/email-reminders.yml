@@ -1,1 +1,33 @@
+name: Daily email reminders
+
+on:
+  schedule:
+    - cron: "0 8 * * *"  # 08:00 UTC daily
+  workflow_dispatch:
+
+jobs:
+  send-reminders:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Install dependencies (none needed, but kept for future)
+        run: |
+          python -m pip install --upgrade pip
+
+      - name: Send reminder emails
+        env:
+          SMTP_USER_1: ${{ secrets.SMTP_USER_1 }}
+          SMTP_PASS_1: ${{ secrets.SMTP_PASS_1 }}
+          SMTP_USER_2: ${{ secrets.SMTP_USER_2 }}
+          SMTP_PASS_2: ${{ secrets.SMTP_PASS_2 }}
+        run: |
+          python mailer.py
 
