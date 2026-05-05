@@ -181,6 +181,24 @@ button:hover {
 }
 
 /* --------------------------------------------------
+   Extra bit
+-------------------------------------------------- */
+.delete-btn {
+  margin-left: auto;
+  background: none;
+  border: none;
+  color: #c00;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.item-edit {
+  flex: 1;
+  font-size: 16px;
+  padding: 4px;
+}
+
+/* --------------------------------------------------
    Preview panel
 -------------------------------------------------- */
 
