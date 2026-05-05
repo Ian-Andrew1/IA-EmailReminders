@@ -4,10 +4,10 @@
   <meta charset="UTF-8">
   <title>Daily List Editor</title>
 
-  <!-- Light/Dark mode -->
   <meta name="color-scheme" content="light dark">
 
-  <link rel="stylesheet" href="style.css">
+  <!-- IMPORTANT: now pointing to css/style.css -->
+  <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
   <header class="topbar">
@@ -21,14 +21,12 @@
 
   <main class="container">
 
-    <!-- LIST EDITOR -->
     <section class="panel">
       <p class="hint">
         One item per line. Drag to reorder. Click “Save to GitHub” to update <code>list.json</code>.
       </p>
 
       <ul id="sortableList" class="sortable"></ul>
-
       <textarea id="items" class="hidden-textarea" spellcheck="false"></textarea>
 
       <div class="buttons">
@@ -39,7 +37,6 @@
       </div>
     </section>
 
-    <!-- PREVIEW PANEL -->
     <section id="previewPanel" class="panel preview-hidden">
       <h2>Email Preview</h2>
       <p class="hint">This is exactly what the email will look like.</p>
@@ -49,7 +46,6 @@
       <p id="testStatus" class="status"></p>
     </section>
 
-    <!-- AUTH PANEL -->
     <section class="panel">
       <button id="toggleAuth" class="secondary small">Show GitHub authentication</button>
 
@@ -76,6 +72,7 @@
 
   </main>
 
-  <script src="editor.js"></script>
+  <!-- IMPORTANT: now pointing to js/editor.js -->
+  <script src="js/editor.js"></script>
 </body>
 </html>
