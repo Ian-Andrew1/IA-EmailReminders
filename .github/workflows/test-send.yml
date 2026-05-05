@@ -1,0 +1,99 @@
+import smtplib
+import ssl
+import json
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+import argparse
+from datetime import datetime
+
+# ------------------------------------------------------------
+# CONFIG
+# ------------------------------------------------------------
+
+LIST_FILE = "list.json"
+
+REAL_SUBJECT = "Todays Personal Tasks Reminder"
+TEST_SUBJECT = "Personal Tasks Reminder TESTING"
+
+SENDER = "YOUR_OUTLOOK_ADDRESS_HERE"
+RECIPIENT = "YOUR_OUTLOOK_ADDRESS_HERE"
+
+SMTP_SERVER = "smtp.office365.com"
+SMTP_PORT = 587
+
+
+# ------------------------------------------------------------
+# LOAD LIST
+# ------------------------------------------------------------
+
+def load_items():
+    with open(LIST_FILE, "r", encoding="utf-8") as f:
+        data = json.load(f)
+    return data.get("items", [])
+
+
+# ------------------------------------------------------------
+# BUILD EMAIL HTML
+# ------------------------------------------------------------
+
+def build_html(items, subject):
+    html_items = "".join(f"<li>{i}</li>" for i in items)
+
+    html = f"""
+    <html>
+    <body>
+      <h2>{subject}</h2>
+      <ul>
+        {html_items}
+      </ul>
+      <p style="font-size:12px;color:#888;">
+        Sent automatically at {datetime.now().strftime('%H:%M on %d %b %Y')}
+      </p>
+    </body>
+    </html>
+    """
+    return html
+
+
+# ------------------------------------------------------------
+# SEND EMAIL
+# ------------------------------------------------------------
+
+def send_email(subject, html):
+    msg = MIMEMultipart("alternative")
+    msg["Subject"] = subject
+    msg["From"] = SENDER
+    msg["To"] = RECIPIENT
+
+    msg.attach(MIMEText(html, "html"))
+
+    context = ssl.create_default_context()
+
+    with smtplib.SMTP(SMTP_SERVER, SMTP_PORT) as server:
+        server.starttls(context=context)
+        server.login(SENDER, SMTP_PASSWORD)  # Provided via GitHub Secrets
+        server.sendmail(SENDER, RECIPIENT, msg.as_string())
+
+
+# ------------------------------------------------------------
+# MAIN
+# ------------------------------------------------------------
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--test", action="store_true", help="Send test email")
+    args = parser.parse_args()
+
+    items = load_items()
+
+    if args.test:
+        subject = TEST_SUBJECT
+    else:
+        subject = REAL_SUBJECT
+
+    html = build_html(items, subject)
+    send_email(subject, html)
+
+
+if __name__ == "__main__":
+    main()
