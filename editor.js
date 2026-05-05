@@ -9,6 +9,20 @@ const statusEl = document.getElementById("status");
 const ghUserEl = document.getElementById("ghUser");
 const ghTokenEl = document.getElementById("ghToken");
 
+const toggleAuthBtn = document.getElementById("toggleAuth");
+const authPanel = document.getElementById("authPanel");
+
+toggleAuthBtn.addEventListener("click", () => {
+  const isHidden = authPanel.classList.contains("auth-hidden");
+  if (isHidden) {
+    authPanel.classList.remove("auth-hidden");
+    toggleAuthBtn.textContent = "Hide GitHub authentication";
+  } else {
+    authPanel.classList.add("auth-hidden");
+    toggleAuthBtn.textContent = "Show GitHub authentication";
+  }
+});
+
 async function fetchFileMeta() {
   const url = `https://api.github.com/repos/${OWNER}/${REPO}/contents/${FILE_PATH}`;
   const res = await fetch(url);
@@ -54,9 +68,7 @@ async function saveList() {
     .map(l => l.trim())
     .filter(l => l.length > 0);
 
-  const newJson = {
-    items: lines
-  };
+  const newJson = { items: lines };
 
   setStatus("Preparing save…");
   saveBtn.disabled = true;
@@ -100,7 +112,6 @@ async function saveList() {
 }
 
 loadBtn.addEventListener("click", loadList);
-saveBtn.addEventListener("click", saveList);
 
 // Load once on page open
 loadList().catch(() => {});
