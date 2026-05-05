@@ -194,9 +194,44 @@ function renderList(items) {
 
     const text = document.createElement("span");
     text.textContent = item;
+    text.className = "item-text";
+
+    // Make item editable on click
+    text.addEventListener("click", () => {
+      const input = document.createElement("input");
+      input.type = "text";
+      input.value = text.textContent;
+      input.className = "item-edit";
+
+      text.replaceWith(input);
+      input.focus();
+
+      input.addEventListener("blur", () => {
+        text.textContent = input.value.trim();
+        input.replaceWith(text);
+        syncTextarea();
+        updatePreview();
+      });
+
+      input.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") input.blur();
+      });
+    });
+
+    // Delete button
+    const del = document.createElement("button");
+    del.textContent = "×";
+    del.className = "delete-btn";
+
+    del.addEventListener("click", () => {
+      li.remove();
+      syncTextarea();
+      updatePreview();
+    });
 
     li.appendChild(handle);
     li.appendChild(text);
+    li.appendChild(del);
 
     addDragEvents(li);
     sortableList.appendChild(li);
@@ -204,6 +239,7 @@ function renderList(items) {
 
   syncTextarea();
 }
+
 
 function addDragEvents(li) {
   li.addEventListener("dragstart", (e) => {
