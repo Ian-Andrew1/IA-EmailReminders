@@ -2,11 +2,10 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Daily List Editor v1.2</title>
+  <title>Daily List Editor v1.3</title>
 
   <meta name="color-scheme" content="light dark">
 
-  <!-- IMPORTANT: now pointing to css/style.css -->
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -23,19 +22,15 @@
 
     <section class="panel">
       <p class="hint">
-        One item per line. Drag to reorder. Click “Save to GitHub” to update <code>list.json</code>.
+        One item per line. Drag to reorder. Click an item to edit it.
       </p>
 
       <ul id="sortableList" class="sortable"></ul>
       <textarea id="items" class="hidden-textarea" spellcheck="false"></textarea>
 
       <div class="buttons">
-        <button id="loadBtn">Reload from GitHub</button>
-        <button id="saveBtn" class="primary">Save to GitHub</button>
-        <button id="backupBtn" class="secondary">Backup</button>
-        <button id="restoreBtn" class="secondary">Restore</button>
         <button id="addItemBtn" class="secondary">Add item</button>
-
+        <button id="saveBtn" class="primary">Save</button>
       </div>
     </section>
 
@@ -54,7 +49,7 @@
       <div id="authPanel" class="auth-hidden">
         <h2>GitHub authentication</h2>
         <p class="hint">
-          Enter a fine‑grained personal access token with <strong>contents: read/write</strong> on
+          Enter a fine‑grained personal access token with <strong>contents: read/write</strong> and <strong>actions: read/write</strong> on
           <code>Ian-Andrew1/IA-EmailReminders</code>. It is <strong>not</strong> stored anywhere.
         </p>
 
@@ -74,7 +69,6 @@
 
   </main>
 
-  <!-- IMPORTANT: now pointing to js/editor.js -->
   <script src="js/editor.js"></script>
 </body>
 </html>
