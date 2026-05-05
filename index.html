@@ -22,24 +22,30 @@
     </section>
 
     <section class="panel">
-      <h2>GitHub credentials (used only in your browser)</h2>
-      <p class="hint">
-        Enter a fine‑grained personal access token with <strong>contents: read/write</strong> on
-        <code>Ian-Andrew1/IA-EmailReminders</code>. It is <strong>not</strong> stored anywhere.
-      </p>
-      <label>
-        GitHub username
-        <input id="ghUser" type="text" autocomplete="username">
-      </label>
-      <label>
-        Personal access token
-        <input id="ghToken" type="password" autocomplete="off">
-      </label>
-      <p id="status" class="status"></p>
+      <button id="toggleAuth" class="secondary small">Show GitHub authentication</button>
+
+      <div id="authPanel" class="auth-hidden">
+        <h2>GitHub authentication</h2>
+        <p class="hint">
+          Enter a fine‑grained personal access token with <strong>contents: read/write</strong> on
+          <code>Ian-Andrew1/IA-EmailReminders</code>. It is <strong>not</strong> stored anywhere.
+        </p>
+
+        <label>
+          GitHub username
+          <input id="ghUser" type="text" autocomplete="username">
+        </label>
+
+        <label>
+          Personal access token
+          <input id="ghToken" type="password" autocomplete="off">
+        </label>
+
+        <p id="status" class="status"></p>
+      </div>
     </section>
   </main>
 
   <script src="editor.js"></script>
 </body>
 </html>
-
