@@ -263,7 +263,7 @@ function syncTextarea() {
 }
 
 /* ============================================================
-   ADD ITEM
+   ADD ITEM (SAFE VERSION)
 ============================================================ */
 
 addItemBtn.addEventListener("click", () => {
@@ -271,15 +271,15 @@ addItemBtn.addEventListener("click", () => {
   items.push("");   // blank new item
   renderList(items);
 
-  // Automatically focus the new blank item for editing
+  // Safe auto-focus
   const lastItem = sortableList.lastElementChild;
-  const textSpan = lastItem.querySelector(".item-text");
-
-  textSpan.click();  // triggers inline edit mode
+  if (lastItem) {
+    const textSpan = lastItem.querySelector(".item-text");
+    if (textSpan) textSpan.click();
+  }
 
   updatePreview();
 });
-
 
 /* ============================================================
    PREVIEW
