@@ -15,10 +15,8 @@ const FILE_PATH = "list.json";
 const itemsEl = document.getElementById("items");
 const sortableList = document.getElementById("sortableList");
 
-const loadBtn = document.getElementById("loadBtn");
 const saveBtn = document.getElementById("saveBtn");
-const backupBtn = document.getElementById("backupBtn");
-const restoreBtn = document.getElementById("restoreBtn");
+const addItemBtn = document.getElementById("addItemBtn");
 
 const statusEl = document.getElementById("status");
 const testStatusEl = document.getElementById("testStatus");
@@ -89,9 +87,6 @@ async function fetchFileMeta() {
 }
 
 async function loadList() {
-  setStatus("Loading list.json from GitHub…");
-  loadBtn.disabled = true;
-
   try {
     const meta = await fetchFileMeta();
     const content = atob(meta.content.replace(/\n/g, ""));
@@ -100,18 +95,12 @@ async function loadList() {
 
     itemsEl.value = items.join("\n");
     renderList(items);
-
-    setStatus("Loaded.");
     updatePreview();
   } catch (err) {
     console.error(err);
     setStatus("Error loading list.json – see console.");
-  } finally {
-    loadBtn.disabled = false;
   }
 }
-
-loadBtn.addEventListener("click", loadList);
 
 /* ============================================================
    SAVE list.json TO GITHUB
@@ -127,10 +116,9 @@ async function saveList() {
   }
 
   const lines = getListItems();
-
   const newJson = { items: lines };
 
-  setStatus("Preparing save…");
+  setStatus("Saving…");
   saveBtn.disabled = true;
 
   try {
@@ -164,7 +152,7 @@ async function saveList() {
       return;
     }
 
-    setStatus("Saved to GitHub.");
+    setStatus("Saved.");
   } catch (err) {
     console.error(err);
     setStatus("Error saving – see console.");
@@ -176,7 +164,7 @@ async function saveList() {
 saveBtn.addEventListener("click", saveList);
 
 /* ============================================================
-   DRAG & DROP SORTING
+   DRAG / EDIT / DELETE / ADD
 ============================================================ */
 
 let dragSrcEl = null;
@@ -196,7 +184,7 @@ function renderList(items) {
     text.textContent = item;
     text.className = "item-text";
 
-    // Make item editable on click
+    // Inline editing
     text.addEventListener("click", () => {
       const input = document.createElement("input");
       input.type = "text";
@@ -240,7 +228,6 @@ function renderList(items) {
   syncTextarea();
 }
 
-
 function addDragEvents(li) {
   li.addEventListener("dragstart", (e) => {
     dragSrcEl = li;
@@ -276,46 +263,18 @@ function syncTextarea() {
 }
 
 /* ============================================================
-   BACKUP / RESTORE
+   ADD ITEM
 ============================================================ */
 
-backupBtn.addEventListener("click", () => {
-  const blob = new Blob([itemsEl.value], { type: "text/plain" });
-  const url = URL.createObjectURL(blob);
-
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = "list-backup.txt";
-  a.click();
-
-  URL.revokeObjectURL(url);
-});
-
-restoreBtn.addEventListener("click", () => {
-  const input = document.createElement("input");
-  input.type = "file";
-  input.accept = ".txt,.json";
-
-  input.onchange = () => {
-    const file = input.files[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = () => {
-      const text = reader.result;
-      const items = text.split("\n").map((l) => l.trim()).filter(Boolean);
-      itemsEl.value = items.join("\n");
-      renderList(items);
-      updatePreview();
-    };
-    reader.readAsText(file);
-  };
-
-  input.click();
+addItemBtn.addEventListener("click", () => {
+  const items = getListItems();
+  items.push("New item");
+  renderList(items);
+  updatePreview();
 });
 
 /* ============================================================
-   PREVIEW RENDERING
+   PREVIEW
 ============================================================ */
 
 function updatePreview() {
@@ -332,7 +291,7 @@ function updatePreview() {
 }
 
 /* ============================================================
-   TEST SEND (GitHub Action trigger)
+   TEST SEND
 ============================================================ */
 
 testSendBtn.addEventListener("click", async () => {
@@ -374,18 +333,6 @@ testSendBtn.addEventListener("click", async () => {
 function setStatus(msg) {
   statusEl.textContent = msg;
 }
-
-/* ============================================================
-   Extra bit
-============================================================ */
-const addItemBtn = document.getElementById("addItemBtn");
-
-addItemBtn.addEventListener("click", () => {
-  const items = getListItems();
-  items.push("New item");
-  renderList(items);
-  updatePreview();
-});
 
 /* ============================================================
    INITIAL LOAD
