@@ -3,24 +3,53 @@
 <head>
   <meta charset="UTF-8">
   <title>Daily List Editor</title>
+
+  <!-- Light/Dark mode -->
+  <meta name="color-scheme" content="light dark">
+
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <main class="container">
+  <header class="topbar">
     <h1>Daily List Editor</h1>
 
+    <div class="topbar-buttons">
+      <button id="darkModeToggle" class="secondary small">Dark mode</button>
+      <button id="previewToggle" class="secondary small">Show preview</button>
+    </div>
+  </header>
+
+  <main class="container">
+
+    <!-- LIST EDITOR -->
     <section class="panel">
       <p class="hint">
-        One item per line. Click “Save to GitHub” to update <code>list.json</code>.
+        One item per line. Drag to reorder. Click “Save to GitHub” to update <code>list.json</code>.
       </p>
-      <textarea id="items" rows="12" spellcheck="false"></textarea>
+
+      <ul id="sortableList" class="sortable"></ul>
+
+      <textarea id="items" class="hidden-textarea" spellcheck="false"></textarea>
 
       <div class="buttons">
         <button id="loadBtn">Reload from GitHub</button>
         <button id="saveBtn" class="primary">Save to GitHub</button>
+        <button id="backupBtn" class="secondary">Backup</button>
+        <button id="restoreBtn" class="secondary">Restore</button>
       </div>
     </section>
 
+    <!-- PREVIEW PANEL -->
+    <section id="previewPanel" class="panel preview-hidden">
+      <h2>Email Preview</h2>
+      <p class="hint">This is exactly what the email will look like.</p>
+      <div id="previewContent" class="preview-box"></div>
+
+      <button id="testSendBtn" class="primary small">Send test email now</button>
+      <p id="testStatus" class="status"></p>
+    </section>
+
+    <!-- AUTH PANEL -->
     <section class="panel">
       <button id="toggleAuth" class="secondary small">Show GitHub authentication</button>
 
@@ -44,6 +73,7 @@
         <p id="status" class="status"></p>
       </div>
     </section>
+
   </main>
 
   <script src="editor.js"></script>
