@@ -376,6 +376,18 @@ function setStatus(msg) {
 }
 
 /* ============================================================
+   Extra bit
+============================================================ */
+const addItemBtn = document.getElementById("addItemBtn");
+
+addItemBtn.addEventListener("click", () => {
+  const items = getListItems();
+  items.push("New item");
+  renderList(items);
+  updatePreview();
+});
+
+/* ============================================================
    INITIAL LOAD
 ============================================================ */
 
