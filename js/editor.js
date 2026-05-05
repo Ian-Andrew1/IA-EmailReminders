@@ -35,6 +35,17 @@ const previewContent = document.getElementById("previewContent");
 const testSendBtn = document.getElementById("testSendBtn");
 
 /* ============================================================
+   CHANGE TRACKING
+============================================================ */
+
+let dirty = false;
+
+function markDirty() {
+  dirty = true;
+  saveBtn.disabled = false;
+}
+
+/* ============================================================
    AUTH PANEL TOGGLE
 ============================================================ */
 
@@ -96,6 +107,9 @@ async function loadList() {
     itemsEl.value = items.join("\n");
     renderList(items);
     updatePreview();
+
+    dirty = false;
+    saveBtn.disabled = true;
   } catch (err) {
     console.error(err);
     setStatus("Error loading list.json – see console.");
@@ -116,6 +130,13 @@ async function saveList() {
   }
 
   const lines = getListItems();
+
+  // Empty item guard
+  if (lines.some(i => i.trim() === "")) {
+    setStatus("Cannot save: empty items detected.");
+    return;
+  }
+
   const newJson = { items: lines };
 
   setStatus("Saving…");
@@ -149,14 +170,15 @@ async function saveList() {
       const text = await res.text();
       console.error("Save error:", res.status, text);
       setStatus(`Error saving: ${res.status}. See console.`);
+      saveBtn.disabled = false;
       return;
     }
 
     setStatus("Saved.");
+    dirty = false;
   } catch (err) {
     console.error(err);
     setStatus("Error saving – see console.");
-  } finally {
     saveBtn.disabled = false;
   }
 }
@@ -199,6 +221,8 @@ function renderList(items) {
         input.replaceWith(text);
         syncTextarea();
         updatePreview();
+        markDirty();
+        autoSave();
       });
 
       input.addEventListener("keydown", (e) => {
@@ -215,6 +239,8 @@ function renderList(items) {
       li.remove();
       syncTextarea();
       updatePreview();
+      markDirty();
+      autoSave();
     });
 
     li.appendChild(handle);
@@ -239,6 +265,8 @@ function addDragEvents(li) {
     li.classList.remove("dragging");
     syncTextarea();
     updatePreview();
+    markDirty();
+    autoSave();
   });
 
   li.addEventListener("dragover", (e) => {
@@ -263,7 +291,7 @@ function syncTextarea() {
 }
 
 /* ============================================================
-   ADD ITEM (SAFE VERSION)
+   ADD ITEM (SAFE + DIRTY + AUTOSAVE)
 ============================================================ */
 
 addItemBtn.addEventListener("click", () => {
@@ -271,7 +299,6 @@ addItemBtn.addEventListener("click", () => {
   items.push("");   // blank new item
   renderList(items);
 
-  // Safe auto-focus
   const lastItem = sortableList.lastElementChild;
   if (lastItem) {
     const textSpan = lastItem.querySelector(".item-text");
@@ -279,7 +306,24 @@ addItemBtn.addEventListener("click", () => {
   }
 
   updatePreview();
+  markDirty();
+  autoSave();
 });
+
+/* ============================================================
+   AUTO-SAVE
+============================================================ */
+
+let autoSaveTimer = null;
+
+function autoSave() {
+  if (!dirty) return;
+
+  clearTimeout(autoSaveTimer);
+  autoSaveTimer = setTimeout(() => {
+    saveList();
+  }, 1200);
+}
 
 /* ============================================================
    PREVIEW
