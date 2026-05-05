@@ -60,4 +60,34 @@ applyDarkMode();
 darkModeToggle.addEventListener("click", () => {
   const current = localStorage.getItem("darkMode") || "light";
   const next = current === "light" ? "dark" : "light";
-  local
+  localStorage.setItem("darkMode", next);
+  applyDarkMode();
+});
+
+/* ============================================================
+   PREVIEW PANEL TOGGLE
+============================================================ */
+
+previewToggle.addEventListener("click", () => {
+  const hidden = previewPanel.classList.contains("preview-hidden");
+  previewPanel.classList.toggle("preview-hidden");
+  previewToggle.textContent = hidden ? "Hide preview" : "Show preview";
+  if (hidden) updatePreview();
+});
+
+/* ============================================================
+   LOAD list.json FROM GITHUB
+============================================================ */
+
+async function fetchFileMeta() {
+  const url = `https://api.github.com/repos/${OWNER}/${REPO}/contents/${FILE_PATH}`;
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`Failed to fetch file: ${res.status}`);
+  return res.json();
+}
+
+async function loadList() {
+  setStatus("Loading list.json from GitHub…");
+  loadBtn.disabled = true;
+
+  try {
