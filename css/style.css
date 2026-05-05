@@ -86,6 +86,11 @@ button.primary:hover {
   background: #006cbe;
 }
 
+button.primary:disabled {
+  background: #9bbcd4;
+  cursor: not-allowed;
+}
+
 button.secondary {
   background: #ddd;
   color: #222;
