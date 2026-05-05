@@ -1,1 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Daily List Editor</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="container">
+    <h1>Daily List Editor</h1>
+
+    <section class="panel">
+      <p class="hint">
+        One item per line. Click “Save to GitHub” to update <code>list.json</code>.
+      </p>
+      <textarea id="items" rows="12" spellcheck="false"></textarea>
+
+      <div class="buttons">
+        <button id="loadBtn">Reload from GitHub</button>
+        <button id="saveBtn" class="primary">Save to GitHub</button>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>GitHub credentials (used only in your browser)</h2>
+      <p class="hint">
+        Enter a fine‑grained personal access token with <strong>contents: read/write</strong> on
+        <code>Ian-Andrew1/IA-EmailReminders</code>. It is <strong>not</strong> stored anywhere.
+      </p>
+      <label>
+        GitHub username
+        <input id="ghUser" type="text" autocomplete="username">
+      </label>
+      <label>
+        Personal access token
+        <input id="ghToken" type="password" autocomplete="off">
+      </label>
+      <p id="status" class="status"></p>
+    </section>
+  </main>
+
+  <script src="editor.js"></script>
+</body>
+</html>
 
