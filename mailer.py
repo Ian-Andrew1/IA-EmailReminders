@@ -1,65 +1,99 @@
-import os
-import json
 import smtplib
-from email.message import EmailMessage
+import ssl
+import json
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+import argparse
 from datetime import datetime
+
+# ------------------------------------------------------------
+# CONFIG
+# ------------------------------------------------------------
+
+LIST_FILE = "list.json"
+
+REAL_SUBJECT = "Todays Personal Tasks Reminder"
+TEST_SUBJECT = "Personal Tasks Reminder TESTING"
+
+SENDER = "ian-andrew@outlook.com"
+RECIPIENT = "ian-andrew@outlook.com"
 
 SMTP_SERVER = "smtp.office365.com"
 SMTP_PORT = 587
 
-SENDER = "ian-andrew@outlook.com"
-RECIPIENT = "ian-andrew@outlook.com"  # Only one email now
 
-def load_list():
-    with open("list.json", "r", encoding="utf-8") as f:
+# ------------------------------------------------------------
+# LOAD LIST
+# ------------------------------------------------------------
+
+def load_items():
+    with open(LIST_FILE, "r", encoding="utf-8") as f:
         data = json.load(f)
     return data.get("items", [])
 
-def build_html(items):
-    list_items = "".join(f"<li>{item}</li>" for item in items)
-    now = datetime.utcnow().strftime("%Y-%m-%d %H:%M UTC")
 
-    return f"""
+# ------------------------------------------------------------
+# BUILD EMAIL HTML
+# ------------------------------------------------------------
+
+def build_html(items, subject):
+    html_items = "".join(f"<li>{i}</li>" for i in items)
+
+    html = f"""
     <html>
-    <body style="font-family: Arial, sans-serif; color: #222;">
-        <h2>Today's Tasks</h2>
-        <ul>
-            {list_items}
-        </ul>
-        <p style="font-size: 12px; color: #666;">
-            Sent automatically at 04:00 UK time.<br>
-            Generated at {now}.
-        </p>
+    <body>
+      <h2>{subject}</h2>
+      <ul>
+        {html_items}
+      </ul>
+      <p style="font-size:12px;color:#888;">
+        Sent automatically at {datetime.now().strftime('%H:%M on %d %b %Y')}
+      </p>
     </body>
     </html>
     """
+    return html
 
-def send_email(username, password, from_addr, to_addr, html_body):
-    msg = EmailMessage()
-    msg["From"] = from_addr
-    msg["To"] = to_addr
-    msg["Subject"] = "Today's Tasks"
-    msg.add_alternative(html_body, subtype="html")
+
+# ------------------------------------------------------------
+# SEND EMAIL
+# ------------------------------------------------------------
+
+def send_email(subject, html):
+    msg = MIMEMultipart("alternative")
+    msg["Subject"] = subject
+    msg["From"] = SENDER
+    msg["To"] = RECIPIENT
+
+    msg.attach(MIMEText(html, "html"))
+
+    context = ssl.create_default_context()
 
     with smtplib.SMTP(SMTP_SERVER, SMTP_PORT) as server:
-        server.starttls()
-        server.login(username, password)
-        server.send_message(msg)
+        server.starttls(context=context)
+        server.login(SENDER, SMTP_PASSWORD)  # Provided via GitHub Secrets
+        server.sendmail(SENDER, RECIPIENT, msg.as_string())
+
+
+# ------------------------------------------------------------
+# MAIN
+# ------------------------------------------------------------
 
 def main():
-    username = os.getenv("SMTP_USER")
-    password = os.getenv("SMTP_PASS")
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--test", action="store_true", help="Send test email")
+    args = parser.parse_args()
 
-    if not username or not password:
-        print("Missing SMTP_USER or SMTP_PASS environment variables.")
-        return
+    items = load_items()
 
-    items = load_list()
-    html_body = build_html(items)
+    if args.test:
+        subject = TEST_SUBJECT
+    else:
+        subject = REAL_SUBJECT
 
-    print(f"Sending email to {RECIPIENT}...")
-    send_email(username, password, SENDER, RECIPIENT, html_body)
-    print("Done.")
+    html = build_html(items, subject)
+    send_email(subject, html)
+
 
 if __name__ == "__main__":
     main()
