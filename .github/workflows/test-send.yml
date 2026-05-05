@@ -15,8 +15,8 @@ LIST_FILE = "list.json"
 REAL_SUBJECT = "Todays Personal Tasks Reminder"
 TEST_SUBJECT = "Personal Tasks Reminder TESTING"
 
-SENDER = "YOUR_OUTLOOK_ADDRESS_HERE"
-RECIPIENT = "YOUR_OUTLOOK_ADDRESS_HERE"
+SENDER = "ian-andrew@outlook.com"
+RECIPIENT = "ian-andrew@outlook.com"
 
 SMTP_SERVER = "smtp.office365.com"
 SMTP_PORT = 587
