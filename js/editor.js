@@ -18,7 +18,7 @@ const sortableList = document.getElementById("sortableList");
 const saveBtn = document.getElementById("saveBtn");
 const addItemBtn = document.getElementById("addItemBtn");
 
-const statusEl = document.getElementById("status");
+const saveStatusEl = document.getElementById("saveStatus");   // FIXED
 const testStatusEl = document.getElementById("testStatus");
 
 const ghUserEl = document.getElementById("ghUser");
@@ -112,7 +112,7 @@ async function loadList() {
     saveBtn.disabled = true;
   } catch (err) {
     console.error(err);
-    setStatus("Error loading list.json – see console.");
+    setSaveStatus("Error loading list.json – see console.");
   }
 }
 
@@ -125,7 +125,7 @@ async function saveList() {
   const token = ghTokenEl.value.trim();
 
   if (!username || !token) {
-    setStatus("Enter GitHub username and personal access token first.");
+    setSaveStatus("Enter GitHub username and personal access token first.");
     return;
   }
 
@@ -133,13 +133,13 @@ async function saveList() {
 
   // Empty item guard
   if (lines.some(i => i.trim() === "")) {
-    setStatus("Cannot save: empty items detected.");
+    setSaveStatus("Cannot save: empty items detected.");
     return;
   }
 
   const newJson = { items: lines };
 
-  setStatus("Saving…");
+  setSaveStatus("Saving…");
   saveBtn.disabled = true;
 
   try {
@@ -169,16 +169,16 @@ async function saveList() {
     if (!res.ok) {
       const text = await res.text();
       console.error("Save error:", res.status, text);
-      setStatus(`Error saving: ${res.status}. See console.`);
+      setSaveStatus(`Error saving: ${res.status}. See console.`);
       saveBtn.disabled = false;
       return;
     }
 
-    setStatus("Saved.");
+    setSaveStatus("Saved.");
     dirty = false;
   } catch (err) {
     console.error(err);
-    setStatus("Error saving – see console.");
+    setSaveStatus("Error saving – see console.");
     saveBtn.disabled = false;
   }
 }
@@ -382,8 +382,8 @@ testSendBtn.addEventListener("click", async () => {
    STATUS
 ============================================================ */
 
-function setStatus(msg) {
-  statusEl.textContent = msg;
+function setSaveStatus(msg) {
+  saveStatusEl.textContent = msg;
 }
 
 /* ============================================================
