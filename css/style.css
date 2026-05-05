@@ -1,214 +1,221 @@
-/* --------------------------------------------------
-   Base layout
--------------------------------------------------- */
-
-:root {
-  --bg: #ffffff;
-  --fg: #222222;
-  --panel-bg: #f5f5f5;
-  --border: #cccccc;
-  --accent: #0078d4;
-  --hint: #666666;
-  --preview-bg: #fafafa;
-}
-
-body.dark {
-  --bg: #1e1e1e;
-  --fg: #e6e6e6;
-  --panel-bg: #2a2a2a;
-  --border: #444444;
-  --accent: #4aa3ff;
-  --hint: #aaaaaa;
-  --preview-bg: #333333;
-}
+/* ============================================================
+   BASE LAYOUT
+============================================================ */
 
 body {
   margin: 0;
-  padding: 0;
-  background: var(--bg);
-  color: var(--fg);
   font-family: system-ui, sans-serif;
-  transition: background 0.25s, color 0.25s;
+  background: #f5f5f5;
+  color: #222;
+}
+
+body.dark {
+  background: #1e1e1e;
+  color: #ddd;
 }
 
 .container {
   max-width: 700px;
-  margin: 0 auto;
-  padding: 20px;
+  margin: 20px auto;
+  padding: 0 15px;
 }
 
-/* --------------------------------------------------
-   Top bar
--------------------------------------------------- */
+/* ============================================================
+   TOP BAR
+============================================================ */
 
 .topbar {
+  background: #333;
+  color: white;
+  padding: 15px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 12px 20px;
-  border-bottom: 1px solid var(--border);
-  background: var(--panel-bg);
+}
+
+.topbar h1 {
+  margin: 0;
+  font-size: 22px;
 }
 
 .topbar-buttons button {
-  margin-left: 8px;
+  margin-left: 10px;
 }
 
-/* --------------------------------------------------
-   Panels
--------------------------------------------------- */
+/* ============================================================
+   PANELS
+============================================================ */
 
 .panel {
-  background: var(--panel-bg);
-  border: 1px solid var(--border);
-  padding: 16px;
+  background: white;
+  padding: 20px;
   margin-top: 20px;
-  border-radius: 6px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+body.dark .panel {
+  background: #2a2a2a;
+  box-shadow: 0 2px 4px rgba(255,255,255,0.05);
 }
 
 .hint {
-  color: var(--hint);
   font-size: 14px;
-  margin-top: 0;
+  opacity: 0.7;
+  margin-bottom: 10px;
 }
 
-/* --------------------------------------------------
-   Buttons
--------------------------------------------------- */
+/* ============================================================
+   BUTTONS
+============================================================ */
 
 button {
   padding: 8px 14px;
-  border-radius: 4px;
-  border: 1px solid var(--border);
-  background: var(--panel-bg);
-  color: var(--fg);
+  border-radius: 6px;
+  border: none;
   cursor: pointer;
-  transition: background 0.2s, border 0.2s;
+  font-size: 15px;
 }
 
 button.primary {
-  background: var(--accent);
-  border-color: var(--accent);
+  background: #0078d4;
   color: white;
+}
+
+button.primary:hover {
+  background: #006cbe;
 }
 
 button.secondary {
   background: #ddd;
-  border-color: #aaa;
   color: #222;
 }
 
-body.dark button.secondary {
-  background: #444;
-  border-color: #666;
-  color: #eee;
+button.secondary:hover {
+  background: #ccc;
 }
 
 button.small {
-  padding: 4px 8px;
-  font-size: 12px;
+  padding: 5px 10px;
+  font-size: 13px;
 }
 
-button:hover {
-  opacity: 0.9;
-}
-
-/* --------------------------------------------------
-   Status text
--------------------------------------------------- */
-
-.status {
-  margin-top: 10px;
-  font-size: 14px;
-  color: var(--accent);
-}
-
-/* --------------------------------------------------
-   Hidden panels
--------------------------------------------------- */
-
-.auth-hidden {
-  display: none;
-}
-
-.preview-hidden {
-  display: none;
-}
-
-/* --------------------------------------------------
-   Sortable list
--------------------------------------------------- */
+/* ============================================================
+   SORTABLE LIST
+============================================================ */
 
 .sortable {
   list-style: none;
   padding: 0;
-  margin: 0 0 12px 0;
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  background: var(--bg);
+  margin: 0;
 }
 
 .sortable li {
-  padding: 10px 12px;
-  border-bottom: 1px solid var(--border);
-  cursor: grab;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  padding: 10px;
+  margin-bottom: 6px;
+  background: #fafafa;
+  border-radius: 6px;
+  cursor: grab;
 }
 
-.sortable li:last-child {
-  border-bottom: none;
+body.dark .sortable li {
+  background: #3a3a3a;
 }
 
 .sortable li.dragging {
-  opacity: 0.5;
-  background: var(--panel-bg);
+  opacity: 0.4;
 }
 
 .drag-handle {
-  cursor: grab;
-  opacity: 0.6;
-  margin-right: 8px;
-}
-
-/* --------------------------------------------------
-   Hidden textarea
--------------------------------------------------- */
-
-.hidden-textarea {
-  display: none;
-}
-
-/* --------------------------------------------------
-   Extra bit
--------------------------------------------------- */
-.delete-btn {
-  margin-left: auto;
-  background: none;
-  border: none;
-  color: #c00;
   font-size: 20px;
-  cursor: pointer;
+  margin-right: 12px;
+  cursor: grab;
+}
+
+/* ============================================================
+   INLINE EDITING + DELETE BUTTON
+============================================================ */
+
+.item-text {
+  flex: 1;
+  cursor: text;
 }
 
 .item-edit {
   flex: 1;
   font-size: 16px;
   padding: 4px;
+  border: 1px solid #aaa;
+  border-radius: 4px;
 }
 
-/* --------------------------------------------------
-   Preview panel
--------------------------------------------------- */
+.delete-btn {
+  margin-left: 10px;
+  background: none;
+  border: none;
+  color: #c00;
+  font-size: 22px;
+  cursor: pointer;
+}
+
+.delete-btn:hover {
+  color: #900;
+}
+
+/* ============================================================
+   HIDDEN TEXTAREA
+============================================================ */
+
+.hidden-textarea {
+  display: none;
+}
+
+/* ============================================================
+   PREVIEW PANEL
+============================================================ */
+
+.preview-hidden {
+  display: none;
+}
 
 .preview-box {
-  background: var(--preview-bg);
-  border: 1px solid var(--border);
-  padding: 16px;
+  background: #f0f0f0;
+  padding: 15px;
   border-radius: 6px;
   margin-top: 10px;
-  white-space: pre-wrap;
-  font-family: system-ui, sans-serif;
 }
 
+body.dark .preview-box {
+  background: #333;
+}
+
+/* ============================================================
+   AUTH PANEL
+============================================================ */
+
+.auth-hidden {
+  display: none;
+}
+
+label {
+  display: block;
+  margin-top: 10px;
+}
+
+input[type="text"],
+input[type="password"] {
+  width: 100%;
+  padding: 8px;
+  margin-top: 4px;
+  border-radius: 6px;
+  border: 1px solid #aaa;
+  font-size: 15px;
+}
+
+.status {
+  margin-top: 10px;
+  font-size: 14px;
+  opacity: 0.8;
+}
