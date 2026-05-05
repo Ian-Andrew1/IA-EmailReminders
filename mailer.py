@@ -1,4 +1,5 @@
 import os
+import json
 import smtplib
 from email.message import EmailMessage
 from datetime import datetime
@@ -7,32 +8,38 @@ SMTP_SERVER = "smtp.office365.com"
 SMTP_PORT = 587
 
 SENDER = "ian-andrew@outlook.com"
+RECIPIENT = "ian-andrew@outlook.com"  # Only one email now
 
-RECIPIENTS = [
-    "ian-andrew@outlook.com",
-    "jbo-b@outlook.com"
-]
+def load_list():
+    with open("list.json", "r", encoding="utf-8") as f:
+        data = json.load(f)
+    return data.get("items", [])
 
-def send_email(username, password, from_addr, to_addr):
+def build_html(items):
+    list_items = "".join(f"<li>{item}</li>" for item in items)
     now = datetime.utcnow().strftime("%Y-%m-%d %H:%M UTC")
 
-    subject = "Daily reminder"
-    body = f"""Hello,
+    return f"""
+    <html>
+    <body style="font-family: Arial, sans-serif; color: #222;">
+        <h2>Today's Tasks</h2>
+        <ul>
+            {list_items}
+        </ul>
+        <p style="font-size: 12px; color: #666;">
+            Sent automatically at 04:00 UK time.<br>
+            Generated at {now}.
+        </p>
+    </body>
+    </html>
+    """
 
-This is your automated daily reminder email.
-
-Sent from: {from_addr}
-To: {to_addr}
-Time (UTC): {now}
-
-You can adjust the content of this message in mailer.py.
-"""
-
+def send_email(username, password, from_addr, to_addr, html_body):
     msg = EmailMessage()
     msg["From"] = from_addr
     msg["To"] = to_addr
-    msg["Subject"] = subject
-    msg.set_content(body)
+    msg["Subject"] = "Today's Tasks"
+    msg.add_alternative(html_body, subtype="html")
 
     with smtplib.SMTP(SMTP_SERVER, SMTP_PORT) as server:
         server.starttls()
@@ -47,10 +54,12 @@ def main():
         print("Missing SMTP_USER or SMTP_PASS environment variables.")
         return
 
-    for recipient in RECIPIENTS:
-        print(f"Sending email to {recipient}...")
-        send_email(username, password, SENDER, recipient)
-        print(f"Done for {recipient}.")
+    items = load_list()
+    html_body = build_html(items)
+
+    print(f"Sending email to {RECIPIENT}...")
+    send_email(username, password, SENDER, RECIPIENT, html_body)
+    print("Done.")
 
 if __name__ == "__main__":
     main()
