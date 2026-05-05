@@ -18,7 +18,7 @@ const sortableList = document.getElementById("sortableList");
 const saveBtn = document.getElementById("saveBtn");
 const addItemBtn = document.getElementById("addItemBtn");
 
-const saveStatusEl = document.getElementById("saveStatus");   // FIXED
+const saveStatusEl = document.getElementById("saveStatus");
 const testStatusEl = document.getElementById("testStatus");
 
 const ghUserEl = document.getElementById("ghUser");
@@ -131,7 +131,6 @@ async function saveList() {
 
   const lines = getListItems();
 
-  // Empty item guard
   if (lines.some(i => i.trim() === "")) {
     setSaveStatus("Cannot save: empty items detected.");
     return;
@@ -174,8 +173,12 @@ async function saveList() {
       return;
     }
 
+    // Refresh file + SHA so future saves don't 409
+    await loadList();
+
     setSaveStatus("Saved.");
     dirty = false;
+
   } catch (err) {
     console.error(err);
     setSaveStatus("Error saving – see console.");
@@ -206,7 +209,6 @@ function renderList(items) {
     text.textContent = item;
     text.className = "item-text";
 
-    // Inline editing
     text.addEventListener("click", () => {
       const input = document.createElement("input");
       input.type = "text";
@@ -230,7 +232,6 @@ function renderList(items) {
       });
     });
 
-    // Delete button
     const del = document.createElement("button");
     del.textContent = "×";
     del.className = "delete-btn";
@@ -291,12 +292,12 @@ function syncTextarea() {
 }
 
 /* ============================================================
-   ADD ITEM (SAFE + DIRTY + AUTOSAVE)
+   ADD ITEM
 ============================================================ */
 
 addItemBtn.addEventListener("click", () => {
   const items = getListItems();
-  items.push("");   // blank new item
+  items.push("");
   renderList(items);
 
   const lastItem = sortableList.lastElementChild;
