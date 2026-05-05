@@ -268,10 +268,18 @@ function syncTextarea() {
 
 addItemBtn.addEventListener("click", () => {
   const items = getListItems();
-  items.push("New item");
+  items.push("");   // blank new item
   renderList(items);
+
+  // Automatically focus the new blank item for editing
+  const lastItem = sortableList.lastElementChild;
+  const textSpan = lastItem.querySelector(".item-text");
+
+  textSpan.click();  // triggers inline edit mode
+
   updatePreview();
 });
+
 
 /* ============================================================
    PREVIEW
