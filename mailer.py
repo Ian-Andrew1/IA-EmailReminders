@@ -6,31 +6,23 @@ from datetime import datetime
 SMTP_SERVER = "smtp.office365.com"
 SMTP_PORT = 587
 
-ACCOUNTS = [
-    {
-        "user_env": "SMTP_USER_1",
-        "pass_env": "SMTP_PASS_1",
-        "from_addr": "ian-andrew@outlook.com",
-        "to_addr": "ian-andrew@outlook.com",  # change if needed
-    },
-    {
-        "user_env": "SMTP_USER_2",
-        "pass_env": "SMTP_PASS_2",
-        "from_addr": "jbo-b@outlook.com",
-        "to_addr": "jbo-b@outlook.com",  # change if needed
-    },
-]
+SENDER = "ian-andrew@outlook.com"
 
+RECIPIENTS = [
+    "ian-andrew@outlook.com",
+    "jbo-b@outlook.com"
+]
 
 def send_email(username, password, from_addr, to_addr):
     now = datetime.utcnow().strftime("%Y-%m-%d %H:%M UTC")
 
-    subject = f"Daily reminder from {from_addr}"
+    subject = "Daily reminder"
     body = f"""Hello,
 
 This is your automated daily reminder email.
 
 Sent from: {from_addr}
+To: {to_addr}
 Time (UTC): {now}
 
 You can adjust the content of this message in mailer.py.
@@ -47,20 +39,18 @@ You can adjust the content of this message in mailer.py.
         server.login(username, password)
         server.send_message(msg)
 
-
 def main():
-    for account in ACCOUNTS:
-        user = os.getenv(account["user_env"])
-        pwd = os.getenv(account["pass_env"])
+    username = os.getenv("SMTP_USER")
+    password = os.getenv("SMTP_PASS")
 
-        if not user or not pwd:
-            print(f"Skipping {account['from_addr']} – missing env vars.")
-            continue
+    if not username or not password:
+        print("Missing SMTP_USER or SMTP_PASS environment variables.")
+        return
 
-        print(f"Sending email for {account['from_addr']}...")
-        send_email(user, pwd, account["from_addr"], account["to_addr"])
-        print(f"Done for {account['from_addr']}.")
+    for recipient in RECIPIENTS:
+        print(f"Sending email to {recipient}...")
+        send_email(username, password, SENDER, recipient)
+        print(f"Done for {recipient}.")
 
 if __name__ == "__main__":
     main()
-
