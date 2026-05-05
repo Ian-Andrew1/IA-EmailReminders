@@ -1,54 +1,63 @@
-async function loadList(jsonFile) {
-    const response = await fetch(jsonFile + '?t=' + Date.now());
-    const data = await response.json();
-    return data.items;
+/* ============================================================
+   CONFIG
+============================================================ */
+
+const OWNER = "Ian-Andrew1";
+const REPO = "IA-EmailReminders";
+const FILE_PATH = "list.json";
+
+/* ============================================================
+   ELEMENTS
+============================================================ */
+
+const itemsEl = document.getElementById("items");
+const sortableList = document.getElementById("sortableList");
+
+const loadBtn = document.getElementById("loadBtn");
+const saveBtn = document.getElementById("saveBtn");
+const backupBtn = document.getElementById("backupBtn");
+const restoreBtn = document.getElementById("restoreBtn");
+
+const statusEl = document.getElementById("status");
+const testStatusEl = document.getElementById("testStatus");
+
+const ghUserEl = document.getElementById("ghUser");
+const ghTokenEl = document.getElementById("ghToken");
+
+const toggleAuthBtn = document.getElementById("toggleAuth");
+const authPanel = document.getElementById("authPanel");
+
+const darkModeToggle = document.getElementById("darkModeToggle");
+const previewToggle = document.getElementById("previewToggle");
+const previewPanel = document.getElementById("previewPanel");
+const previewContent = document.getElementById("previewContent");
+
+const testSendBtn = document.getElementById("testSendBtn");
+
+/* ============================================================
+   AUTH PANEL TOGGLE
+============================================================ */
+
+toggleAuthBtn.addEventListener("click", () => {
+  const hidden = authPanel.classList.contains("auth-hidden");
+  authPanel.classList.toggle("auth-hidden");
+  toggleAuthBtn.textContent = hidden
+    ? "Hide GitHub authentication"
+    : "Show GitHub authentication";
+});
+
+/* ============================================================
+   DARK MODE
+============================================================ */
+
+function applyDarkMode() {
+  const mode = localStorage.getItem("darkMode") || "light";
+  document.body.classList.toggle("dark", mode === "dark");
 }
 
-function renderList(items, container) {
-    container.innerHTML = "";
-    items.forEach((item, index) => {
-        const div = document.createElement("div");
-        div.className = "item-row";
+applyDarkMode();
 
-        const input = document.createElement("input");
-        input.value = item;
-
-        const removeBtn = document.createElement("button");
-        removeBtn.textContent = "Remove";
-        removeBtn.onclick = () => {
-            items.splice(index, 1);
-            renderList(items, container);
-        };
-
-        div.appendChild(input);
-        div.appendChild(removeBtn);
-        container.appendChild(div);
-    });
-}
-
-async function saveList(jsonFile, items, token, repoOwner, repoName) {
-    const url = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/${jsonFile}`;
-
-    const getRes = await fetch(url, {
-        headers: { "Authorization": `token ${token}` }
-    });
-    const getData = await getRes.json();
-
-    const newContent = btoa(JSON.stringify({ items }, null, 2));
-
-    await fetch(url, {
-        method: "PUT",
-        headers: {
-            "Authorization": `token ${token}`,
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-            message: `Update ${jsonFile}`,
-            content: newContent,
-            sha: getData.sha
-        })
-    });
-
-    alert("Saved!");
-}
-
+darkModeToggle.addEventListener("click", () => {
+  const current = localStorage.getItem("darkMode") || "light";
+  const next = current === "light" ? "dark" : "light";
+  local
