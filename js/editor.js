@@ -76,7 +76,7 @@ function clearDirty() {
 }
 
 /* ============================================================
-   AUTH PANEL TOGGLE
+   AUTH PANEL TOGGLE (HIDDEN BY DEFAULT)
 ============================================================ */
 
 toggleAuthBtn.addEventListener("click", () => {
@@ -346,16 +346,17 @@ addItemBtn.addEventListener("click", () => {
 });
 
 /* ============================================================
-   AUTO-SAVE (0.5s debounce)
+   AUTO-SAVE (1s debounce, fully locked)
 ============================================================ */
 
 function autoSave() {
   if (!dirty) return;
+  if (saving) return; // ⭐ THE FINAL FIX — prevents queued saves
 
   clearTimeout(autoSaveTimer);
   autoSaveTimer = setTimeout(() => {
     saveList();
-  }, 500);
+  }, 1000);
 }
 
 /* ============================================================
