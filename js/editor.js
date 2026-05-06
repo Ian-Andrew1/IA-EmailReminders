@@ -1,4 +1,4 @@
-console.log("EDITOR.JS LOADED");
+console.log("EDITOR.JS VERSION 3 LOADED");
 
 /* ============================================================
    CONFIG
@@ -117,12 +117,16 @@ previewToggle.addEventListener("click", () => {
 });
 
 /* ============================================================
-   LOAD list.json FROM GITHUB
+   LOAD list.json FROM GITHUB (CACHE-BUSTED)
 ============================================================ */
 
 async function fetchFileMeta() {
-  const url = `https://api.github.com/repos/${OWNER}/${REPO}/contents/${FILE_PATH}`;
-  const res = await fetch(url);
+  const url = `https://api.github.com/repos/${OWNER}/${REPO}/contents/${FILE_PATH}?t=${Date.now()}`;
+
+  const res = await fetch(url, {
+    cache: "no-store"
+  });
+
   if (!res.ok) throw new Error(`Failed to fetch file: ${res.status}`);
   return res.json();
 }
@@ -146,7 +150,7 @@ async function loadList() {
 }
 
 /* ============================================================
-   SAVE list.json TO GITHUB (409‑proof)
+   SAVE list.json TO GITHUB (409-PROOF)
 ============================================================ */
 
 async function saveList() {
@@ -351,7 +355,7 @@ addItemBtn.addEventListener("click", () => {
 
 function autoSave() {
   if (!dirty) return;
-  if (saving) return; // ⭐ THE FINAL FIX — prevents queued saves
+  if (saving) return; // ⭐ prevents queued saves
 
   clearTimeout(autoSaveTimer);
   autoSaveTimer = setTimeout(() => {
