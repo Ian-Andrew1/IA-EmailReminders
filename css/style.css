@@ -214,13 +214,3 @@ input[type="password"] {
   width: 100%;
   padding: 8px;
   margin-top: 4px;
-  border-radius: 6px;
-  border: 1px solid #aaa;
-  font-size: 15px;
-}
-
-.status {
-  margin-top: 10px;
-  font-size: 14px;
-  opacity: 0.8;
-}
