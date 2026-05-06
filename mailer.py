@@ -5,6 +5,7 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 import argparse
 from datetime import datetime
+import os   # ← REQUIRED
 
 # ------------------------------------------------------------
 # CONFIG
@@ -20,6 +21,9 @@ RECIPIENT = "ian-andrew@outlook.com"
 
 SMTP_SERVER = "smtp.office365.com"
 SMTP_PORT = 587
+
+# Load password from GitHub Actions secret
+SMTP_PASSWORD = os.environ["SMTP_PASSWORD"]   # ← REQUIRED
 
 
 # ------------------------------------------------------------
@@ -71,7 +75,7 @@ def send_email(subject, html):
 
     with smtplib.SMTP(SMTP_SERVER, SMTP_PORT) as server:
         server.starttls(context=context)
-        server.login(SENDER, SMTP_PASSWORD)  # Provided via GitHub Secrets
+        server.login(SENDER, SMTP_PASSWORD)
         server.sendmail(SENDER, RECIPIENT, msg.as_string())
 
 
