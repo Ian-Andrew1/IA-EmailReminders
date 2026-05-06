@@ -35,11 +35,34 @@ const previewContent = document.getElementById("previewContent");
 const testSendBtn = document.getElementById("testSendBtn");
 
 /* ============================================================
+   CREDENTIAL STORAGE
+============================================================ */
+
+function loadCredentials() {
+  const u = localStorage.getItem("ghUser");
+  const t = localStorage.getItem("ghToken");
+
+  if (u) ghUserEl.value = u;
+  if (t) ghTokenEl.value = t;
+}
+
+function saveCredentials() {
+  localStorage.setItem("ghUser", ghUserEl.value.trim());
+  localStorage.setItem("ghToken", ghTokenEl.value.trim());
+}
+
+ghUserEl.addEventListener("input", saveCredentials);
+ghTokenEl.addEventListener("input", saveCredentials);
+
+loadCredentials();
+
+/* ============================================================
    CHANGE TRACKING
 ============================================================ */
 
 let dirty = false;
 let autoSaveTimer = null;
+let saving = false;
 
 function markDirty() {
   dirty = true;
@@ -123,15 +146,19 @@ async function loadList() {
 }
 
 /* ============================================================
-   SAVE list.json TO GITHUB
+   SAVE list.json TO GITHUB (409‑proof)
 ============================================================ */
 
 async function saveList() {
+  if (saving) return;
+  saving = true;
+
   const username = ghUserEl.value.trim();
   const token = ghTokenEl.value.trim();
 
   if (!username || !token) {
     setSaveStatus("Enter GitHub username and personal access token first.");
+    saving = false;
     return;
   }
 
@@ -139,6 +166,7 @@ async function saveList() {
 
   if (lines.some(i => i.trim() === "")) {
     setSaveStatus("Cannot save: empty items detected.");
+    saving = false;
     return;
   }
 
@@ -175,11 +203,10 @@ async function saveList() {
       const text = await res.text();
       console.error("Save error:", res.status, text);
       setSaveStatus(`Error saving: ${res.status}. See console.`);
-      saveBtn.disabled = false;
+      saving = false;
       return;
     }
 
-    // Reload file + SHA
     await loadList();
 
     setSaveStatus("Saved.");
@@ -188,8 +215,9 @@ async function saveList() {
   } catch (err) {
     console.error(err);
     setSaveStatus("Error saving – see console.");
-    saveBtn.disabled = false;
   }
+
+  saving = false;
 }
 
 saveBtn.addEventListener("click", saveList);
@@ -318,7 +346,7 @@ addItemBtn.addEventListener("click", () => {
 });
 
 /* ============================================================
-   AUTO-SAVE
+   AUTO-SAVE (0.5s debounce)
 ============================================================ */
 
 function autoSave() {
@@ -327,7 +355,7 @@ function autoSave() {
   clearTimeout(autoSaveTimer);
   autoSaveTimer = setTimeout(() => {
     saveList();
-  }, 1200);
+  }, 500);
 }
 
 /* ============================================================
