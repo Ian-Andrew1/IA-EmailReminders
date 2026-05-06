@@ -39,10 +39,17 @@ const testSendBtn = document.getElementById("testSendBtn");
 ============================================================ */
 
 let dirty = false;
+let autoSaveTimer = null;
 
 function markDirty() {
   dirty = true;
   saveBtn.disabled = false;
+}
+
+function clearDirty() {
+  dirty = false;
+  saveBtn.disabled = true;
+  clearTimeout(autoSaveTimer);
 }
 
 /* ============================================================
@@ -108,8 +115,7 @@ async function loadList() {
     renderList(items);
     updatePreview();
 
-    dirty = false;
-    saveBtn.disabled = true;
+    clearDirty();
   } catch (err) {
     console.error(err);
     setSaveStatus("Error loading list.json – see console.");
@@ -173,11 +179,11 @@ async function saveList() {
       return;
     }
 
-    // Refresh file + SHA so future saves don't 409
+    // Reload file + SHA
     await loadList();
 
     setSaveStatus("Saved.");
-    dirty = false;
+    clearDirty();
 
   } catch (err) {
     console.error(err);
@@ -314,8 +320,6 @@ addItemBtn.addEventListener("click", () => {
 /* ============================================================
    AUTO-SAVE
 ============================================================ */
-
-let autoSaveTimer = null;
 
 function autoSave() {
   if (!dirty) return;
